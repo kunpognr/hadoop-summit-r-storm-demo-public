@@ -37,23 +37,17 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-library:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.twitter4j:twitter4j-stream:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.twitter4j:twitter4j-core:3.0.3" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:8.1.0.RC5" level="project" />
-    <orderEntry type="library" name="Maven: org.mortbay.jetty:servlet-api:3.0.20100224" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-continuation:8.1.0.RC5" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:8.1.0.RC5" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:8.1.0.RC5" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:8.1.0.RC5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.storm:storm-core:0.9.2-incubating-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.clojure:clojure:1.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: clj-time:clj-time:0.4.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: joda-time:joda-time:2.0" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: compojure:compojure:1.1.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.clojure:core.incubator:0.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.clojure:tools.macro:0.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: clout:clout:1.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: ring:ring-core:1.1.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-codec:commons-codec:1.6" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-io:commons-io:2.4" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-fileupload:commons-fileupload:1.2.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: hiccup:hiccup:0.3.6" level="project" />
@@ -63,6 +57,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: ring:ring-servlet:0.3.11" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:jetty:6.1.26" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:jetty-util:6.1.26" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mortbay.jetty:servlet-api:2.5-20081211" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.clojure:tools.logging:0.2.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.clojure:math.numeric-tower:0.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.clojure:tools.cli:0.2.4" level="project" />
@@ -74,7 +69,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.zookeeper:zookeeper:3.4.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: jline:jline:2.11" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.netty:netty:3.2.2.Final" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:guava:13.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:17.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.googlecode.json-simple:json-simple:1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.twitter:carbonite:1.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.esotericsoftware.kryo:kryo:2.21" level="project" />
@@ -93,12 +88,23 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:log4j-over-slf4j:1.6.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty:3.6.3.Final" level="project" />
     <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:9.1.5.v20140505" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:9.1.5.v20140505" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:9.1.5.v20140505" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:9.1.5.v20140505" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-webapp:9.1.5.v20140505" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-xml:9.1.5.v20140505" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlet:9.1.5.v20140505" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-security:9.1.5.v20140505" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-joda:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.3.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: reply:reply:0.3.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.thnetos:cd-client:0.3.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: clj-http-lite:clj-http-lite:0.2.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: slingshot:slingshot:0.10.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: cheshire:cheshire:4.0.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.fasterxml.jackson.core:jackson-core:2.0.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.0.6" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.clojure:tools.nrepl:0.2.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.cemerick:drawbridge:0.0.6" level="project" />

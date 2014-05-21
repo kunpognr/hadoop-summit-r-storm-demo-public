@@ -22,13 +22,16 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import org.json.simple.JSONArray;
 
 
 public class PrinterBolt extends BaseBasicBolt {
 
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
-    System.out.println(tuple + " kkkk");
+      JSONArray ja = (JSONArray) tuple.getValues();
+      JSONArray ja_in = (JSONArray) ja.get(0);
+      System.out.println(ja_in.size() + " kkkk");
   }
 
   @Override

@@ -17,8 +17,8 @@ storm/starter/trident/TridentReach$StaticSingleKeyMapState.class
 storm/starter/BasicDRPCTopology$ExclaimBolt.class
 storm/starter/bolt/SingleJoinBolt$ExpireCallback.class
 storm/starter/TransactionalGlobalCount$1$1.class
-storm/starter/TransactionalWords$BucketCountUpdater.class
 storm/starter/TransactionalWords$KeyedCountUpdater.class
+storm/starter/TransactionalWords$BucketCountUpdater.class
 storm/starter/TransactionalGlobalCount$BatchCount.class
 storm/starter/spout/TwitterSampleSpout.class
 storm/starter/trident/TridentWordCount$Split.class
@@ -55,6 +55,7 @@ storm/starter/bolt/AbstractRankerBolt.class
 com/mapr/hsummit/RBolt.class
 storm/starter/trident/TridentReach.class
 storm/starter/ExclamationTopology$ExclamationBolt.class
+com/mapr/hsummit/ResultsServlet.class
 storm/starter/TransactionalWords$CountValue.class
 storm/starter/WordCountTopology.class
 storm/starter/trident/TridentReach$1.class

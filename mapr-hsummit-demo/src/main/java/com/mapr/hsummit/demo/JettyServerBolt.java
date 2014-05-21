@@ -74,11 +74,11 @@ public class JettyServerBolt extends BaseRichBolt {
             DataPoint dp = new DataPoint();
             dp.setTimestamp(new DateTime(Long.parseLong((String)ja_in.get(0)) * 1000000));
             dp.setValue(Double.valueOf((String)ja_in.get(1)));
-            rs.dataPoints.add(dp);
-            if (rs.dataPoints.size() >= ResultsServlet.DATA_POINT_LIMIT) {
-                rs.dataPoints.removeFirst();
+            ResultsServlet.dataPoints.add(dp);
+            if (ResultsServlet.dataPoints.size() >= ResultsServlet.DATA_POINT_LIMIT) {
+                ResultsServlet.dataPoints.removeFirst();
             }
-            System.out.println("data point size " + rs.dataPoints.size());
+            System.out.println("data point size " + ResultsServlet.dataPoints.size());
         } catch (Exception e) {
             e.printStackTrace();
         }

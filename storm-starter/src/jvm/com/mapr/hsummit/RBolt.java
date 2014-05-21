@@ -18,7 +18,7 @@ public class RBolt  extends ShellBolt implements IRichBolt {
     }
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declare(new Fields("routput"));
+        outputFieldsDeclarer.declare(new Fields("tswinratio"));
     }
 
     @Override

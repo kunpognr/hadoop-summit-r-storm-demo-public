@@ -12,6 +12,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -21,10 +24,12 @@ public class MLBGameLogSpout extends BaseRichSpout {
 
     SpoutOutputCollector _collector;
     BufferedReader br = null;
+    static SimpleDateFormat sdf  = new SimpleDateFormat("yyyyMMdd");
+    int win = 0, loss = 0, tie = 0;
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-        outputFieldsDeclarer.declare(new Fields("gamelog"));
+        outputFieldsDeclarer.declare(new Fields("ts", "sep", "winloss"));
     }
 
     @Override
@@ -74,24 +79,34 @@ public class MLBGameLogSpout extends BaseRichSpout {
                 int otherscore = 0;
                 boolean giantsGame = false;
                 if ( elems.length > 15 ) {
-                    if ( elems[3].equals("\"SFN\"") ) {
+                    if ( elems[3].replace("\"","").equals("SFN") ) {
                         giantsGame = true;
                         sfnscore = Integer.parseInt(elems[9]);
                         otherscore = Integer.parseInt(elems[10]);
                     }
-                    if ( elems[6].equals("\"SFN\"")) {
+                    if ( elems[6].replace("\"", "").equals("SFN")) {
                         giantsGame = true;
                         sfnscore = Integer.parseInt(elems[10]);
                         otherscore = Integer.parseInt(elems[9]);
                     }
                     if ( giantsGame ) {
-                        if (sfnscore > otherscore) {
-                            _collector.emit(new Values("win"));
-                        } else if (sfnscore < otherscore) {
-                            _collector.emit(new Values("loss"));
-                        } else {
-                            _collector.emit(new Values("tie"));
+
+                        Date date = null;
+                        try {
+                            date = sdf.parse(elems[0].replace("\"", ""));
+                            long timeInMillisSinceEpoch = date.getTime();
+                            if (sfnscore > otherscore) {
+                                win++;
+                            } else if (sfnscore < otherscore) {
+                                loss++;
+                            } else {
+                                tie++;
+                            }
+                            _collector.emit(new Values(timeInMillisSinceEpoch/1000000, ":", (float)win/(float)(win+loss+tie)));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
+
                     }
                 }
             } catch (IOException e) {

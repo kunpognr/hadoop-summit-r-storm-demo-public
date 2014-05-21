@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 public class ResultsServlet extends HttpServlet {
     static int DATA_POINT_LIMIT = 500;
-    final LinkedList<DataPoint> dataPoints = Lists.newLinkedList();
+    static LinkedList<DataPoint> dataPoints = Lists.newLinkedList();
     ObjectMapper mapper;
 
     {
@@ -37,6 +37,7 @@ public class ResultsServlet extends HttpServlet {
 //            values.add(dp);
 //        }
 
+        System.out.println("data called " + dataPoints.size());
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().println(mapper.writeValueAsString(dataPoints));

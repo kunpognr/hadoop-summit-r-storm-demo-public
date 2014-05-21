@@ -35,7 +35,6 @@
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.4" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" name="Maven: commons-fileupload:commons-fileupload:1.2.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" name="Maven: hiccup:hiccup:0.3.6" level="project" />
     <orderEntry type="library" name="Maven: ring:ring-devel:0.3.11" level="project" />
     <orderEntry type="library" name="Maven: clj-stacktrace:clj-stacktrace:0.2.2" level="project" />
@@ -43,7 +42,6 @@
     <orderEntry type="library" name="Maven: ring:ring-servlet:0.3.11" level="project" />
     <orderEntry type="library" name="Maven: org.mortbay.jetty:jetty:6.1.26" level="project" />
     <orderEntry type="library" name="Maven: org.mortbay.jetty:jetty-util:6.1.26" level="project" />
-    <orderEntry type="library" name="Maven: org.mortbay.jetty:servlet-api:2.5-20081211" level="project" />
     <orderEntry type="library" name="Maven: org.clojure:tools.logging:0.2.3" level="project" />
     <orderEntry type="library" name="Maven: org.clojure:math.numeric-tower:0.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.clojure:tools.cli:0.2.2" level="project" />

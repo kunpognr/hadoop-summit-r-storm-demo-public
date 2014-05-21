@@ -6,9 +6,15 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import com.mapr.hsummit.model.DataPoint;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.joda.time.DateTime;
+import org.json.simple.JSONArray;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,30 +26,44 @@ import java.util.Map;
  * Created by syoon on 5/20/14.
  */
 public class JettyServerBolt extends BaseRichBolt {
-
-    public static class HelloWorld extends AbstractHandler {
-
-        @Override
-        public void handle(String s, Request baseRequest, HttpServletRequest httpServletRequest,
-                           HttpServletResponse response) throws IOException, ServletException {
-            response.setContentType("text/html;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_OK);
-            baseRequest.setHandled(true);
-            response.getWriter().println("<h1>Hello World</h1>");
-        }
-    }
+    ResultsServlet rs;
     OutputCollector collector;
 
     public JettyServerBolt() {
-        Server server = new Server(8080);
-        server.setHandler(new HelloWorld());
 
+        System.out.println("Initializing server...");
+        final ServletContextHandler context =
+                new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+        context.setResourceBase("src/webapp");
+
+        context.setClassLoader(
+                Thread.currentThread().getContextClassLoader()
+        );
+
+        context.addServlet(DefaultServlet.class, "/");
+        rs = new ResultsServlet();
+        context.addServlet(new ServletHolder(rs), "/data/");
+
+        final Server server = new Server(8080);
+        server.setHandler(context);
+
+        System.out.println("Starting server...");
         try {
             server.start();
-            //server.join();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Failed to start server!");
+            return;
         }
+
+        System.out.println("Server running...");
+//        while (true) {
+//            try {
+//                server.join();
+//            } catch (InterruptedException e) {
+//                System.out.println("Server interrupted!");
+//            }
+//        }
 
     }
 
@@ -54,7 +74,20 @@ public class JettyServerBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
-        System.out.println(tuple.getString(0));
+        try {
+            JSONArray ja = (JSONArray) tuple.getValues();
+            JSONArray ja_in = (JSONArray) ja.get(0);
+            DataPoint dp = new DataPoint();
+            dp.setTimestamp(new DateTime(Long.parseLong((String)ja_in.get(0)) * 1000000));
+            dp.setValue(Double.valueOf((String)ja_in.get(1)));
+            rs.dataPoints.add(dp);
+            if (rs.dataPoints.size() >= ResultsServlet.DATA_POINT_LIMIT) {
+                rs.dataPoints.removeFirst();
+            }
+            System.out.println("data point size " + rs.dataPoints.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

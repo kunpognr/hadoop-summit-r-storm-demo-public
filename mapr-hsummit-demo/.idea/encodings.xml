@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+    <file url="file://$PROJECT_DIR$/src/main/java/com/mapr/hsummit/demo/HSummitTopology.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/mapr/hsummit/demo/JettyServerBolt.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/mapr/hsummit/demo/MLBGameLogSpout.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/mapr/hsummit/demo/RBolt.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/mapr/hsummit/demo/ResultsServlet.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/mapr/hsummit/demo/TwitterSpout.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/mapr/hsummit/demo/model/DataPoint.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/mapr/hsummit/demo/model/DateTimeJsonSerializer.java" charset="UTF-8" />
+  </component>
+</project>
+

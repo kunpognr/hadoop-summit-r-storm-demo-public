@@ -13,6 +13,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.util.Map;
 
@@ -69,16 +70,21 @@ public class JettyServerBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple tuple) {
         try {
-            JSONArray ja = (JSONArray) tuple.getValues();
-            JSONArray ja_in = (JSONArray) ja.get(0);
-            DataPoint dp = new DataPoint();
-            dp.setTimestamp(new DateTime(Long.parseLong((String)ja_in.get(0)) * 1000000));
-            dp.setValue(Double.valueOf((String)ja_in.get(1)));
-            ResultsServlet.dataPoints.add(dp);
-            if (ResultsServlet.dataPoints.size() >= ResultsServlet.DATA_POINT_LIMIT) {
-                ResultsServlet.dataPoints.removeFirst();
+            System.out.println("tuple size " + tuple.size());
+            if ( tuple.getLong(0) == 0 ) {
+                DataPoint dp = new DataPoint();
+                dp.setTimestamp(new DateTime(tuple.getLong(1) * 1000000));
+                try {
+                    dp.setValue(tuple.getDouble(2));
+                } catch (java.lang.ClassCastException e) {
+                    dp.setValue((double) tuple.getLong(2));
+                }
+                ResultsServlet.dataPoints.add(dp);
+                if (ResultsServlet.dataPoints.size() >= ResultsServlet.DATA_POINT_LIMIT) {
+                    ResultsServlet.dataPoints.removeFirst();
+                }
+                System.out.println("data point size " + ResultsServlet.dataPoints.size());
             }
-            System.out.println("data point size " + ResultsServlet.dataPoints.size());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -2,6 +2,43 @@
 
 #when installed
 library(Storm,quietly=TRUE)
+Tuple = setRefClass("Tuple",
+                    fields = list(
+                      #The tuple's id - this is a string to support languages lacking 64-bit precision
+                      id="character",
+                      #The id of the component that created this tuple
+                      #XXX integer?
+                      comp="character",
+                      #The id of the stream this tuple was emitted to
+                      #XXX integer?
+                      stream="character",
+                      #The id of the task that created this tuple
+                      #XXX integer?
+                      task="character",
+                      #All input values in this tuple
+                      input="list",
+                      #All output values for this tuple
+                      output="vector",
+                      #All tuples used to create field @tuple.out
+                      anchors="vector"
+                      
+                      #parse="function"
+                    ));
+
+Tuple$methods(
+  parse = function(json=character) {
+    t = fromJSON(json);
+    .self$id=as.character(t$id);
+    .self$comp=as.character(t$comp);
+    .self$stream=as.character(t$stream);
+    .self$task=as.character(t$task);
+    .self$input=t$tuple;
+    .self$output=vector(mode="character");
+    .self$anchors=vector(mode="character");
+    .self;
+  }
+);
+
 library(changepoint)
 #library(rjson);
 
@@ -12,8 +49,7 @@ Storm = setRefClass("Storm",
                     fields = list(
                       tuple = "Tuple",
                       setup = "list",
-                      lambda="function",
-                        data="numeric"
+                      lambda="function"
                     )
 );
 
@@ -184,7 +220,8 @@ Storm$methods(
       #https://github.com/nathanmarz/storm/wiki/Multilang-protocol
       #'"task": "',tuple$task,'", ',
 
-      '"tuple": ',t.prefix,toJSON(tuple$output),t.suffix,
+      #'"tuple": ',t.prefix,toJSON(tuple$output),t.suffix,
+      '"tuple": ',toJSON(tuple$output), ' ',
       '}\n',
       'end\n'
     ),sep="");
@@ -192,45 +229,47 @@ Storm$methods(
 );
 #create a Storm object
 storm = Storm$new();
-storm$data <- c(-1)
+winrates <- c()
 #by default it has a handler that logs that the tuple was skipped.
 #let's replace it that with something more useful:
 storm$lambda = function(s) {
-                                        #argument 's' is the Storm object.
 
-                                        #get the current Tuple object.
     t = s$tuple;
-
-                                        #optional: acknowledge receipt of the tuple.
-
-
-                                        #optional: log a message.
     
     s$log(c("processing tuple=",t$id))
-    s$log(c("processing tuple=",t$input))
-    inputl = strsplit(as.character(t$input), ":")
-    s$log(c("processing tuple=", length(inputl)))
-    s$log(c("processing tuple=", length(s$data)))
+    s$log(c("processing tuple=",length(t$input)))
+    s$log(c("processing tuple=", t$input[[1]]))
 
-    #s$ack(t);
-                                        #create contrived tuples to illustrate output.
-
-                                        #create 1st tuple...
-    if ( length(inputl) == 3 ) {
-        t$output = vector(mode="character",length=2);
-        t$output[1] = as.numeric(inputl[[1]])
-        t$output[2] = as.numeric(inputl[[3]])
-        if ( length(storm$data) == 1 & storm$data == -1) {
-            s$data <- c(as.numeric(inputl[[3]]))
-        } else {
-            s$data <- c(s$data, as.numeric(inputl[[3]]))
-        }
-        if(length(s$data) > 10 ) {
-            cpt.mean(s$data)
-        }
+    if ( length(t$input) == 3 ) {
+        #t$output = list(kind=0,
+        #    ts=as.numeric(t$input[[1]]),
+        #    winrate=as.numeric(t$input[[3]]))
+        t$output = c(0, t$input[[1]], t$input[[3]])
+        winrates <<- c(winrates, as.numeric(t$input[[3]]))
                                         #t$output[1] = as.numeric(t$input[3])+as.numeric(t$input[4]);
                                         #...and emit it.
         s$emit(t);
+        if( length(winrates) > 0 & (length(winrates) %% 10) == 0 ) {
+            cm = cpt.mean(winrates)
+            s$log(c("cpt mean comp "))
+            for(i in 1:length(cm@cpts)) {
+                if ( i == length(cm@cpts) ) {
+                    if ( i == 1 ) {
+                        t$output=c(3, as.numeric(cm@cpts[i]), as.numeric(cm@param.est$mean[i]))
+                        s$emit(t)
+                    } else {
+                        t$output=c(2, as.numeric(cm@cpts[i]), as.numeric(cm@param.est$mean[i]))
+                        s$emit(t)
+                    }
+                } else {
+                    t$output=c(1, as.numeric(cm@cpts[i]), as.numeric(cm@param.est$mean[i]))
+                    s$emit(t)
+                }
+            }
+            #t$output=c(1, as.vector(cm@cpts), as.vector(cm@param.est))
+            
+        }
+        
     }
     s$ack(t);                                        #create 2nd tuple...
     #t$output[1] = as.numeric(t$input[3])-as.numeric(t$input[4]);

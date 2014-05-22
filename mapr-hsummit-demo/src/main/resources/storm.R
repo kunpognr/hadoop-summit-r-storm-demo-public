@@ -2,6 +2,7 @@
 
 #when installed
 library(Storm,quietly=TRUE)
+library(changepoint)
 #library(rjson);
 
 #for now
@@ -11,7 +12,8 @@ Storm = setRefClass("Storm",
                     fields = list(
                       tuple = "Tuple",
                       setup = "list",
-                      lambda="function"
+                      lambda="function",
+                        data="numeric"
                     )
 );
 
@@ -47,7 +49,7 @@ Storm$methods(
     #cat('{"command": "emit", "anchors": [], "tuple": ["bolt initializing"]}\nend\n');
     #flush(x.stdout);
     #close(x.stdout);
-
+    
     while (TRUE) {
       rl = as.character(readLines(con=x.stdin,n=1,warn=FALSE));
       if (length(rl) == 0) {
@@ -190,6 +192,7 @@ Storm$methods(
 );
 #create a Storm object
 storm = Storm$new();
+storm$data <- c(-1)
 #by default it has a handler that logs that the tuple was skipped.
 #let's replace it that with something more useful:
 storm$lambda = function(s) {
@@ -207,7 +210,7 @@ storm$lambda = function(s) {
     s$log(c("processing tuple=",t$input))
     inputl = strsplit(as.character(t$input), ":")
     s$log(c("processing tuple=", length(inputl)))
-    s$log(c("processing tuple=", inputl[[3]]))
+    s$log(c("processing tuple=", length(s$data)))
 
     #s$ack(t);
                                         #create contrived tuples to illustrate output.
@@ -217,6 +220,14 @@ storm$lambda = function(s) {
         t$output = vector(mode="character",length=2);
         t$output[1] = as.numeric(inputl[[1]])
         t$output[2] = as.numeric(inputl[[3]])
+        if ( length(storm$data) == 1 & storm$data == -1) {
+            s$data <- c(as.numeric(inputl[[3]]))
+        } else {
+            s$data <- c(s$data, as.numeric(inputl[[3]]))
+        }
+        if(length(s$data) > 10 ) {
+            cpt.mean(s$data)
+        }
                                         #t$output[1] = as.numeric(t$input[3])+as.numeric(t$input[4]);
                                         #...and emit it.
         s$emit(t);

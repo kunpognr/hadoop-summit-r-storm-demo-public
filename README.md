@@ -3,10 +3,23 @@ hadoop-summit-storm-demo
 
 Allen Day's Hadoop Summit Twitter Storm demo
 
+Preparation
+-----------
 
-web-visualizer/
----------------
+Make sure R is installed on your system and it's accessible from /usr/local/bin/r .
 
-Contains a embedded jetty server that serves a page. The web page runs Cubism.js (on top of D3.js) and periodically pulls new data from the server (through XHR).
+Execute R, and check if the Storm and changepoint libraries are installed by running:
 
-The server responds on /data/ with the last 500 data points, that are read tailing a specified file. The datapoints are served in a JSON format.
+> library('Storm')
+
+> library('changepoint')
+
+
+If it doesn't, install using the following command. Be aware that you must have write permissions to the default lib dir, so run R process with a user that have them.
+
+
+> install.packages('Storm')
+
+> install.packages('changepoint')
+
+

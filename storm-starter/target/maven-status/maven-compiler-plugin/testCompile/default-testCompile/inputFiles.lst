@@ -1,9 +1,0 @@
-/Users/syoon/work/projects/hadoop-summit/incubator-storm/examples/storm-starter/test/jvm/storm/starter/bolt/IntermediateRankingsBoltTest.java
-/Users/syoon/work/projects/hadoop-summit/incubator-storm/examples/storm-starter/test/jvm/storm/starter/tools/SlotBasedCounterTest.java
-/Users/syoon/work/projects/hadoop-summit/incubator-storm/examples/storm-starter/test/jvm/storm/starter/bolt/TotalRankingsBoltTest.java
-/Users/syoon/work/projects/hadoop-summit/incubator-storm/examples/storm-starter/test/jvm/storm/starter/tools/SlidingWindowCounterTest.java
-/Users/syoon/work/projects/hadoop-summit/incubator-storm/examples/storm-starter/test/jvm/storm/starter/bolt/RollingCountBoltTest.java
-/Users/syoon/work/projects/hadoop-summit/incubator-storm/examples/storm-starter/test/jvm/storm/starter/tools/RankableObjectWithFieldsTest.java
-/Users/syoon/work/projects/hadoop-summit/incubator-storm/examples/storm-starter/test/jvm/storm/starter/tools/RankingsTest.java
-/Users/syoon/work/projects/hadoop-summit/incubator-storm/examples/storm-starter/test/jvm/storm/starter/tools/NthLastModifiedTimeTrackerTest.java
-/Users/syoon/work/projects/hadoop-summit/incubator-storm/examples/storm-starter/test/jvm/storm/starter/tools/MockTupleHelpers.java

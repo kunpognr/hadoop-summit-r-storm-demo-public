@@ -17,6 +17,7 @@ public class HSummitTopology {
     static String RSCRIPT = HSummitTopology.class.getResource("/storm.R").getFile();
 
     public static void main(String[] args) throws Exception {
+        DataHolder dataHolder = new DataHolder();
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("spout", new MLBGameLogSpout(), 1);
         builder.setBolt("count", new RBolt(), 1).shuffleGrouping("spout");

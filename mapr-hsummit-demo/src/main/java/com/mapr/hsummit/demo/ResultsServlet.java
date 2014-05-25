@@ -13,29 +13,21 @@ import java.util.LinkedList;
 
 public class ResultsServlet extends HttpServlet {
     static int DATA_POINT_LIMIT = 500;
-    static LinkedList<DataPoint> dataPoints = Lists.newLinkedList();
-    ObjectMapper mapper;
-
-    {
-        mapper = new ObjectMapper();
-    }
+    ObjectMapper mapper = new ObjectMapper();
 
     public ResultsServlet() {
 
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        List<DataPoint> values = Lists.newArrayList();
-//
-//        int dur = 120;
-//        DateTime now = DateTime.now().minusSeconds(dur*2);
-//        for (int i = 0; i < dur; i++) {
-//            DateTime ts = now.plusSeconds(2*i);
-//            DataPoint dp = new DataPoint();
-//            dp.setTimestamp(ts);
-//            dp.setValue(Math.random() * 100);
-//            values.add(dp);
-//        }
+        LinkedList<DataPoint> dataPoints = null;
+        if (request.getPathInfo().equals("/points")) {
+            dataPoints = DataHolder.dataSeries.get(DataHolder.DataPointSeries.SCORE);
+        } else if (request.getPathInfo().equals("/levels")) {
+            dataPoints = DataHolder.dataSeries.get(DataHolder.DataPointSeries.LEVEL);
+        } else {
+            dataPoints = Lists.newLinkedList();
+        }
 
         System.out.println("data called " + dataPoints.size());
         response.setContentType("application/json");

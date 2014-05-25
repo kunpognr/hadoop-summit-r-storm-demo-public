@@ -15,13 +15,13 @@ import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
  * Created by syoon on 5/20/14.
  */
 public class JettyServerBolt extends BaseRichBolt {
-    ResultsServlet rs;
     OutputCollector collector;
 
     public JettyServerBolt() {
@@ -37,8 +37,7 @@ public class JettyServerBolt extends BaseRichBolt {
         );
 
         context.addServlet(DefaultServlet.class, "/");
-        rs = new ResultsServlet();
-        context.addServlet(new ServletHolder(rs), "/data/");
+        context.addServlet(new ServletHolder(new ResultsServlet()), "/data/*");
 
         final Server server = new Server(8080);
         server.setHandler(context);
@@ -79,15 +78,26 @@ public class JettyServerBolt extends BaseRichBolt {
                 } catch (java.lang.ClassCastException e) {
                     dp.setValue((double) tuple.getLong(2));
                 }
-                ResultsServlet.dataPoints.add(dp);
-                if (ResultsServlet.dataPoints.size() >= ResultsServlet.DATA_POINT_LIMIT) {
-                    ResultsServlet.dataPoints.removeFirst();
-                }
-                System.out.println("data point size " + ResultsServlet.dataPoints.size());
+
+                DataPoint levelDp = new DataPoint();
+                levelDp.setTimestamp(dp.getTimestamp());
+                levelDp.setValue(0.22);
+
+                addDataPoint(dp, DataHolder.DataPointSeries.SCORE);
+                addDataPoint(levelDp, DataHolder.DataPointSeries.LEVEL);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void addDataPoint(DataPoint dp, DataHolder.DataPointSeries serie) {
+        final LinkedList<DataPoint> points = DataHolder.dataSeries.get(serie);
+        points.add(dp);
+        if (points.size() >= ResultsServlet.DATA_POINT_LIMIT) {
+            points.removeFirst();
+        }
+        System.out.println("data point size " + points.size());
     }
 
     @Override

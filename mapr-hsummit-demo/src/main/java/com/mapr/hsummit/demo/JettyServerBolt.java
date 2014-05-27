@@ -70,34 +70,66 @@ public class JettyServerBolt extends BaseRichBolt {
     public void execute(Tuple tuple) {
         try {
             System.out.println("tuple size " + tuple.size());
+            DateTime dt = new DateTime(tuple.getLong(1) * 1000000);
+            double theValue = 0;
+            try {
+                theValue = tuple.getDouble(2);
+            } catch (java.lang.ClassCastException e) {
+            }
             if ( tuple.getLong(0) == 0 ) {
                 DataPoint dp = new DataPoint();
-                dp.setTimestamp(new DateTime(tuple.getLong(1) * 1000000));
-                try {
-                    dp.setValue(tuple.getDouble(2));
-                } catch (java.lang.ClassCastException e) {
-                    dp.setValue((double) tuple.getLong(2));
-                }
+                dp.setTimestamp(dt);
+                dp.setValue(theValue);
+                dp.setLevel(0.0);
+                addDataPoint(dp, DataHolder.DataPointSeries.SCORE, false);
 
+            } else if (tuple.getLong(0) == 1) {
                 DataPoint levelDp = new DataPoint();
-                levelDp.setTimestamp(dp.getTimestamp());
-                levelDp.setValue(0.22);
-
-                addDataPoint(dp, DataHolder.DataPointSeries.SCORE);
-                addDataPoint(levelDp, DataHolder.DataPointSeries.LEVEL);
+                levelDp.setTimestamp(dt);
+                levelDp.setValue(theValue);
+                addDataPoint(levelDp, DataHolder.DataPointSeries.LEVEL, true);
+            } else if (tuple.getLong(0) == 2) {
+                DataPoint levelDp = new DataPoint();
+                levelDp.setTimestamp(dt);
+                levelDp.setValue(theValue);
+                addDataPoint(levelDp, DataHolder.DataPointSeries.LEVEL, false);
             }
+            arrangeDataPoint();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void addDataPoint(DataPoint dp, DataHolder.DataPointSeries serie) {
+    private void addDataPoint(DataPoint dp, DataHolder.DataPointSeries serie,
+                              boolean reset) {
         final LinkedList<DataPoint> points = DataHolder.dataSeries.get(serie);
+        if (reset) {
+            points.clear();
+        }
         points.add(dp);
         if (points.size() >= ResultsServlet.DATA_POINT_LIMIT) {
             points.removeFirst();
         }
         System.out.println("data point size " + points.size());
+    }
+
+    private void arrangeDataPoint() {
+        // filling up level values onto score datapoints
+        LinkedList<DataPoint> levelPoints = DataHolder.dataSeries.get(DataHolder.DataPointSeries.LEVEL);
+        LinkedList<DataPoint> scorePoints = DataHolder.dataSeries.get(DataHolder.DataPointSeries.SCORE);
+        if ( levelPoints.size() > 0 ) {
+            int lpp = 0;
+            for(int i=0; i < scorePoints.size(); i++) {
+                if ( scorePoints.get(i).getTimestamp().compareTo(levelPoints.get(lpp).getTimestamp()) <= 0) {
+                    scorePoints.get(i).setLevel(levelPoints.get(lpp).getValue());
+                } else {
+                    if ( lpp < levelPoints.size()-1 ) {
+                        lpp++;
+                    }
+                    scorePoints.get(i).setLevel(levelPoints.get(lpp).getValue());
+                }
+            }
+        }
     }
 
     @Override

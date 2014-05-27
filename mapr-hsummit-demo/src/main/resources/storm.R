@@ -230,6 +230,7 @@ Storm$methods(
 #create a Storm object
 storm = Storm$new();
 winrates <- c()
+dates <- c()
 #by default it has a handler that logs that the tuple was skipped.
 #let's replace it that with something more useful:
 storm$lambda = function(s) {
@@ -246,30 +247,25 @@ storm$lambda = function(s) {
         #    winrate=as.numeric(t$input[[3]]))
         t$output = c(0, t$input[[1]], t$input[[3]])
         winrates <<- c(winrates, as.numeric(t$input[[3]]))
+        dates <<- c(dates, as.numeric(t$input[[1]]))
                                         #t$output[1] = as.numeric(t$input[3])+as.numeric(t$input[4]);
                                         #...and emit it.
         s$emit(t);
         if( length(winrates) > 0 & (length(winrates) %% 10) == 0 ) {
             cm = cpt.mean(winrates)
-            s$log(c("cpt mean comp "))
+            s$log(c("cpt mean comp ", as.character(length(dates)), " ",
+                    as.character(cm@cpts[1])))
             for(i in 1:length(cm@cpts)) {
-                if ( i == length(cm@cpts) ) {
-                    if ( i == 1 ) {
-                        t$output=c(3, as.numeric(cm@cpts[i]), as.numeric(cm@param.est$mean[i]))
-                        s$emit(t)
-                    } else {
-                        t$output=c(2, as.numeric(cm@cpts[i]), as.numeric(cm@param.est$mean[i]))
-                        s$emit(t)
-                    }
+                if ( i == 1 ) {
+                    t$output=c(1, as.numeric(dates[cm@cpts[i]]), as.numeric(cm@param.est$mean[i]))
+                    s$emit(t)
                 } else {
-                    t$output=c(1, as.numeric(cm@cpts[i]), as.numeric(cm@param.est$mean[i]))
+                    t$output=c(2, as.numeric(dates[cm@cpts[i]]), as.numeric(cm@param.est$mean[i]))
                     s$emit(t)
                 }
             }
             #t$output=c(1, as.vector(cm@cpts), as.vector(cm@param.est))
-            
         }
-        
     }
     s$ack(t);                                        #create 2nd tuple...
     #t$output[1] = as.numeric(t$input[3])-as.numeric(t$input[4]);

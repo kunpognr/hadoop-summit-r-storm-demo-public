@@ -12,8 +12,11 @@ public class DataPoint {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     DateTime timestamp;
 
-    @JsonProperty(value = "value")
+    @JsonProperty(value = "wp")
     Double value;
+
+    @JsonProperty(value = "changepoint level")
+    Double level;
 
     public DateTime getTimestamp() {
         return timestamp;
@@ -30,4 +33,8 @@ public class DataPoint {
     public void setValue(Double value) {
         this.value = value;
     }
+
+    public Double getLevel() {return level; }
+
+    public void setLevel(Double level) { this.level = level; }
 }

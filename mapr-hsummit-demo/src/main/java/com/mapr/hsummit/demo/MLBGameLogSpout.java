@@ -65,7 +65,7 @@ public class MLBGameLogSpout extends BaseRichSpout {
 
     @Override
     public void nextTuple() {
-        Utils.sleep(100);
+        Utils.sleep(50);
         if ( br != null ) {
             try {
                 String line = br.readLine();

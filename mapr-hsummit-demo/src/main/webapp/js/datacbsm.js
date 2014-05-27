@@ -34,7 +34,7 @@ context.on("focus", function(i) {
 
 function temperature() {
     return context.metric(function(start, stop, step, callback) {
-        d3.json("/data/?start=" + start.toISOString() +
+        d3.json("/data/points/?start=" + start.toISOString() +
             "&stop=" + stop.toISOString() +
             "&step=" + step, function(data) {
                 if(!data) return callback(new Error("unable to load data"));
@@ -42,16 +42,16 @@ function temperature() {
                 // Need to deal with possible gaps in the data
                 var plotData = [];
                 var recentTS = new Date(start);
-                var fillInVal = data[0].temperature;
+                var fillInVal = data[0].value;
                 data.forEach(function(elt, idx, array) {
-                  while(recentTS < elt["ts"]) {
+                  while(recentTS < elt["date"]) {
                     // Simulate a point
                     plotData.push(fillInVal);
                     recentTS.setMilliseconds(recentTS.getMilliseconds() + step);
                   }
                   // Add the received data point
-                  plotData.push(elt["temperature"]);
-                  fillInVal = elt["temperature"];
+                  plotData.push(elt["value"]);
+                  fillInVal = elt["value"];
                   recentTS.setMilliseconds(recentTS.getMilliseconds() + step);
                 });
 

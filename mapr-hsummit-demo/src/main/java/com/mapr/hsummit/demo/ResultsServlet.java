@@ -21,11 +21,12 @@ public class ResultsServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LinkedList<DataPoint> dataPoints = null;
-        if (request.getPathInfo().equals("/points")) {
+        if (request.getPathInfo().contains("/points")) {
             dataPoints = DataHolder.dataSeries.get(DataHolder.DataPointSeries.SCORE);
         } else if (request.getPathInfo().equals("/levels")) {
-            dataPoints = DataHolder.dataSeries.get(DataHolder.DataPointSeries.LEVEL);
+            dataPoints = DataHolder.dataSeries.get(DataHolder.DataPointSeries.SCORE);
         } else {
+            System.out.println("kkkk " + request.getPathInfo());
             dataPoints = Lists.newLinkedList();
         }
 

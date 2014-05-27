@@ -14,7 +14,7 @@
     </style>
 </head>
 <body id="demo">
-<h2>Sample viz</h2>
+<h2>Baseball Winning Percentage Tracking</h2>
 
 <div id="chart">
     <!--<script type="text/javascript" src="./js/datacbsm.js"></script>-->
@@ -53,7 +53,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("/data/points", function(data) {
+d3.json("/data/levels", function(data) {
   color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
 
   data.forEach(function(d) {
@@ -72,10 +72,10 @@ d3.json("/data/points", function(data) {
 
   x.domain(d3.extent(data, function(d) { return d.date; }));
 
-  y.domain([
-    d3.min(series, function(c) { return d3.min(c.values, function(v) { return v.temperature; }); }),
-    d3.max(series, function(c) { return d3.max(c.values, function(v) { return v.temperature; }); })
-  ]);
+  y.domain([0, 1]);
+    //d3.min(series, function(c) { return d3.min(c.values, function(v) { return v.temperature; }); }),
+    //d3.max(series, function(c) { return d3.max(c.values, function(v) { return v.temperature; }); })
+  //]);
 
   svg.append("g")
       .attr("class", "x axis")
@@ -100,7 +100,8 @@ d3.json("/data/points", function(data) {
   serie.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return color(d.name); });
+      .style("stroke", function(d) { if (d.name == "changepoint level") return 'red'; else return 'blue';}); // return color(d.name); });
+
 
   serie.append("text")
       .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })

@@ -38,7 +38,7 @@ public class HSummitTopology {
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("hadoop summit test", conf, builder.createTopology());
 
-            Thread.sleep(300000);
+            Thread.sleep(3000000);
 
             cluster.shutdown();
         }

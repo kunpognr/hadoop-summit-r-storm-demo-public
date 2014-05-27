@@ -13,8 +13,8 @@ import java.util.Map;
  */
 public class RBolt  extends ShellBolt implements IRichBolt {
 
-    public RBolt() {
-        super("Rscript", HSummitTopology.RSCRIPT);
+    public RBolt(String rFilename) {
+        super("Rscript", rFilename);
     }
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {

@@ -12,7 +12,7 @@ public class DataPoint {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     DateTime timestamp;
 
-    @JsonProperty(value = "wp")
+    @JsonProperty(value = "score diff")
     Double value;
 
     @JsonProperty(value = "changepoint level")

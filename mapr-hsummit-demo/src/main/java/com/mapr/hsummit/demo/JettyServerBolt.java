@@ -24,14 +24,14 @@ import java.util.Map;
 public class JettyServerBolt extends BaseRichBolt {
     OutputCollector collector;
 
-    public JettyServerBolt() {
+    public JettyServerBolt(String resourcePath) {
 
         System.out.println("Initializing server...");
         final ServletContextHandler context =
                 new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
-        context.setResourceBase("src/main/webapp");
-
+        //context.setResourceBase(HSummitTopology.class.getResource("/webapp/").getFile());
+        context.setResourceBase(resourcePath + "/webapp");
         context.setClassLoader(
                 Thread.currentThread().getContextClassLoader()
         );
@@ -75,7 +75,13 @@ public class JettyServerBolt extends BaseRichBolt {
             try {
                 theValue = tuple.getDouble(2);
             } catch (java.lang.ClassCastException e) {
+                try {
+                    theValue = (double) tuple.getLong(2);
+                } catch (java.lang.ClassCastException e2) {
+
+                }
             }
+            System.out.println(tuple + "  --- " + theValue);
             if ( tuple.getLong(0) == 0 ) {
                 DataPoint dp = new DataPoint();
                 dp.setTimestamp(dt);

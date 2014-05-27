@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 public class ResultsServlet extends HttpServlet {
-    static int DATA_POINT_LIMIT = 500;
+    static int DATA_POINT_LIMIT = 5000;
     ObjectMapper mapper = new ObjectMapper();
 
     public ResultsServlet() {

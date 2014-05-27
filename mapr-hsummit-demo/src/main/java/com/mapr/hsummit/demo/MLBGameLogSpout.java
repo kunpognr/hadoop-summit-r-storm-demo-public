@@ -8,10 +8,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,9 +21,15 @@ public class MLBGameLogSpout extends BaseRichSpout {
 
     SpoutOutputCollector _collector;
     BufferedReader br = null;
+    String theFile="";
+    String teamName="";
     static SimpleDateFormat sdf  = new SimpleDateFormat("yyyyMMdd");
     int win = 0, loss = 0, tie = 0;
 
+    public MLBGameLogSpout(String resourcePath, String dataFileName, String teamName) {
+        theFile = resourcePath + "/" + dataFileName;
+        this.teamName = teamName;
+    }
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         outputFieldsDeclarer.declare(new Fields("ts", "sep", "winloss"));
@@ -36,8 +39,9 @@ public class MLBGameLogSpout extends BaseRichSpout {
     public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
         _collector = spoutOutputCollector;
         try {
-            br = new BufferedReader(new FileReader(HSummitTopology.GAMELOGFILE));
-        } catch (FileNotFoundException e) {
+            //br = new BufferedReader(new InputStreamReader(HSummitTopology.class.getResourceAsStream("/GL2012.TXT")));
+            br = new BufferedReader(new FileReader(theFile));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -79,12 +83,12 @@ public class MLBGameLogSpout extends BaseRichSpout {
                 int otherscore = 0;
                 boolean giantsGame = false;
                 if ( elems.length > 15 ) {
-                    if ( elems[3].replace("\"","").equals("SFN") ) {
+                    if ( elems[3].replace("\"","").equals(teamName) ) {
                         giantsGame = true;
                         sfnscore = Integer.parseInt(elems[9]);
                         otherscore = Integer.parseInt(elems[10]);
                     }
-                    if ( elems[6].replace("\"", "").equals("SFN")) {
+                    if ( elems[6].replace("\"", "").equals(teamName)) {
                         giantsGame = true;
                         sfnscore = Integer.parseInt(elems[10]);
                         otherscore = Integer.parseInt(elems[9]);
@@ -93,7 +97,18 @@ public class MLBGameLogSpout extends BaseRichSpout {
 
                         Date date = null;
                         try {
-                            date = sdf.parse(elems[0].replace("\"", ""));
+                            String dateString = elems[0];
+                            if ( elems[0].contains(":")) {
+                                String[] elems0split = elems[0].split(":");
+                                if ( elems0split.length == 2) {
+                                    dateString = elems0split[1];
+                                } else {
+                                    System.out.println("can't parse " + elems[0]);
+                                    return;
+                                }
+                            }
+                            System.out.println("date string " + dateString);
+                            date = sdf.parse(dateString.replace("\"", ""));
                             long timeInMillisSinceEpoch = date.getTime();
                             if (sfnscore > otherscore) {
                                 win++;
@@ -102,7 +117,14 @@ public class MLBGameLogSpout extends BaseRichSpout {
                             } else {
                                 tie++;
                             }
-                            _collector.emit(new Values(timeInMillisSinceEpoch/1000000, ":", (float)win/(float)(win+loss+tie)));
+                            double dataToSend = sfnscore - otherscore;
+                            if ( dataToSend > 10 ) {
+                                dataToSend = 10;
+                            }
+                            if ( dataToSend < -10) {
+                                dataToSend = -10;
+                            }
+                            _collector.emit(new Values(timeInMillisSinceEpoch/1000000, ":", dataToSend));//(float)win/(float)(win+loss+tie)));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }

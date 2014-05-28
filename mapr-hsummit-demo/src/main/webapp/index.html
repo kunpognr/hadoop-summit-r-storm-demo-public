@@ -72,7 +72,7 @@ d3.json("/data/levels", function(data) {
 
   x.domain(d3.extent(data, function(d) { return d.date; }));
 
-  y.domain([-10, 10]);
+  y.domain([-5, 5]);
     //d3.min(series, function(c) { return d3.min(c.values, function(v) { return v.temperature; }); }),
     //d3.max(series, function(c) { return d3.max(c.values, function(v) { return v.temperature; }); })
   //]);

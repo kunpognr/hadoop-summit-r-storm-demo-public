@@ -40,6 +40,7 @@ public class MLBGameLogSpout extends BaseRichSpout {
         _collector = spoutOutputCollector;
         try {
             //br = new BufferedReader(new InputStreamReader(HSummitTopology.class.getResourceAsStream("/GL2012.TXT")));
+            System.out.println(System.getProperty("user.dir"));
             br = new BufferedReader(new FileReader(theFile));
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,7 +70,7 @@ public class MLBGameLogSpout extends BaseRichSpout {
 
     @Override
     public void nextTuple() {
-        Utils.sleep(50);
+        Utils.sleep(100);
         if ( br != null ) {
             try {
                 String line = br.readLine();
@@ -118,12 +119,7 @@ public class MLBGameLogSpout extends BaseRichSpout {
                                 tie++;
                             }
                             double dataToSend = sfnscore - otherscore;
-                            if ( dataToSend > 10 ) {
-                                dataToSend = 10;
-                            }
-                            if ( dataToSend < -10) {
-                                dataToSend = -10;
-                            }
+
                             _collector.emit(new Values(timeInMillisSinceEpoch/1000000, ":", dataToSend));//(float)win/(float)(win+loss+tie)));
                         } catch (ParseException e) {
                             e.printStackTrace();

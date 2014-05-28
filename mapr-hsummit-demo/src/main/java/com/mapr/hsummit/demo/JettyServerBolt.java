@@ -22,6 +22,9 @@ import java.util.Map;
  * Created by syoon on 5/20/14.
  */
 public class JettyServerBolt extends BaseRichBolt {
+    static int MAX_SCORE_DIFF = 5;
+    static int MIN_SCORE_DIFF = -5;
+
     OutputCollector collector;
 
     public JettyServerBolt(String resourcePath) {
@@ -85,6 +88,12 @@ public class JettyServerBolt extends BaseRichBolt {
             if ( tuple.getLong(0) == 0 ) {
                 DataPoint dp = new DataPoint();
                 dp.setTimestamp(dt);
+                if ( theValue > MAX_SCORE_DIFF) {
+                    theValue = MAX_SCORE_DIFF;
+                }
+                if ( theValue < MIN_SCORE_DIFF ) {
+                    theValue = MIN_SCORE_DIFF;
+                }
                 dp.setValue(theValue);
                 dp.setLevel(0.0);
                 addDataPoint(dp, DataHolder.DataPointSeries.SCORE, false);
@@ -93,7 +102,7 @@ public class JettyServerBolt extends BaseRichBolt {
                 DataPoint levelDp = new DataPoint();
                 levelDp.setTimestamp(dt);
                 levelDp.setValue(theValue);
-                addDataPoint(levelDp, DataHolder.DataPointSeries.LEVEL, true);
+                addDataPoint(levelDp, DataHolder.DataPointSeries.LEVEL, false);
             } else if (tuple.getLong(0) == 2) {
                 DataPoint levelDp = new DataPoint();
                 levelDp.setTimestamp(dt);
@@ -124,16 +133,24 @@ public class JettyServerBolt extends BaseRichBolt {
         LinkedList<DataPoint> levelPoints = DataHolder.dataSeries.get(DataHolder.DataPointSeries.LEVEL);
         LinkedList<DataPoint> scorePoints = DataHolder.dataSeries.get(DataHolder.DataPointSeries.SCORE);
         if ( levelPoints.size() > 0 ) {
-            int lpp = 0;
-            for(int i=0; i < scorePoints.size(); i++) {
-                if ( scorePoints.get(i).getTimestamp().compareTo(levelPoints.get(lpp).getTimestamp()) <= 0) {
-                    scorePoints.get(i).setLevel(levelPoints.get(lpp).getValue());
-                } else {
-                    if ( lpp < levelPoints.size()-1 ) {
-                        lpp++;
+            for(DataPoint sdp : scorePoints) {
+                boolean found = false;
+                for( DataPoint ldp : levelPoints) {
+                    if ( sdp.getTimestamp().compareTo(ldp.getTimestamp()) == 0) {
+                        sdp.setLevel(ldp.getValue());
+                        found= true;
                     }
-                    scorePoints.get(i).setLevel(levelPoints.get(lpp).getValue());
                 }
+                if (!found) {
+                    sdp.setLevel(0.0);
+                }
+//                scorePoints.get(i).setLevel(levelPoints.get(lpp).getValue());
+//                } else {
+//                    if ( lpp < levelPoints.size()-1 ) {
+//                        lpp++;
+//                    }
+//                    scorePoints.get(i).setLevel(levelPoints.get(lpp).getValue());
+//                }
             }
         }
     }

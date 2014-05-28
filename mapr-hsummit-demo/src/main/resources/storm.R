@@ -2,6 +2,7 @@
 
 #when installed
 library(Storm,quietly=TRUE)
+
 Tuple = setRefClass("Tuple",
                     fields = list(
                       #The tuple's id - this is a string to support languages lacking 64-bit precision
@@ -39,7 +40,6 @@ Tuple$methods(
   }
 );
 
-library(changepoint)
 #library(rjson);
 
 #for now
@@ -227,10 +227,20 @@ Storm$methods(
     ),sep="");
   }
 );
+
+library(changepoint)
+library(zoo)
+library(bcp)
+
 #create a Storm object
 storm = Storm$new();
-winrates <- c()
+values <- c()
 dates <- c()
+year <- 0
+burnin=30
+mcmc=100
+window=50
+threshold <- 0.92
 #by default it has a handler that logs that the tuple was skipped.
 #let's replace it that with something more useful:
 storm$lambda = function(s) {
@@ -242,29 +252,55 @@ storm$lambda = function(s) {
     s$log(c("processing tuple=", t$input[[1]]))
 
     if ( length(t$input) == 3 ) {
-        #t$output = list(kind=0,
-        #    ts=as.numeric(t$input[[1]]),
-        #    winrate=as.numeric(t$input[[3]]))
-        t$output = c(0, t$input[[1]], t$input[[3]])
-        winrates <<- c(winrates, as.numeric(t$input[[3]]))
-        dates <<- c(dates, as.numeric(t$input[[1]]))
-                                        #t$output[1] = as.numeric(t$input[3])+as.numeric(t$input[4]);
-                                        #...and emit it.
-        s$emit(t);
-        if( length(winrates) > 0 & (length(winrates) %% 10) == 0 ) {
-            cm = cpt.mean(winrates)
-            s$log(c("cpt mean comp ", as.character(length(dates)), " ",
-                    as.character(cm@cpts[1])))
-            for(i in 1:length(cm@cpts)) {
-                if ( i == 1 ) {
-                    t$output=c(1, as.numeric(dates[cm@cpts[i]]), as.numeric(cm@param.est$mean[i]))
-                    s$emit(t)
-                } else {
-                    t$output=c(2, as.numeric(dates[cm@cpts[i]]), as.numeric(cm@param.est$mean[i]))
-                    s$emit(t)
+        #process date
+        epoch <- as.numeric(t$input[[1]]) * 1000
+        date <- as.POSIXlt(epoch, origin="1970-01-01")
+
+        #process bcp by the year
+        #if ( date$year > year ) {
+        if ( length(dates) > window ) {
+            bcp_prob <- bcp(values, burnin=burnin, mcmc=mcmc)$posterior.prob
+            changeindexes <- which(bcp_prob > 0.90)
+            s$log(c("CCC ", length(changeindexes)))
+            if ( length(changeindexes) > 0 ) {
+                for( i in 1:length(changeindexes) ) {
+                    if ( i == 1 ) {
+                        t$output=c(1, as.numeric(dates[changeindexes[i]]), as.numeric(bcp_prob[changeindexes[i]]))
+                        s$emit(t)
+                    } else {
+                        t$output=c(2, as.numeric(dates[changeindexes[i]]), as.numeric(bcp_prob[changeindexes[i]]))
+                        s$emit(t)
+                    }
                 }
             }
-            #t$output=c(1, as.vector(cm@cpts), as.vector(cm@param.est))
+            #year <<- date$year
+            values <<- values[-1]
+            dates <<- dates[-1]
+        }
+
+        #}
+
+        values <<- c(values, as.numeric(t$input[[3]]))
+        dates <<- c(dates, as.numeric(t$input[[1]]))
+        t$output = c(0, t$input[[1]], t$input[[3]])
+        s$emit(t);
+        
+        if ( FALSE ) {
+            if( length(values) > 0 & (length(values) %% 10) == 0 ) {
+                cm = cpt.var(values)
+                s$log(c("cpt mean comp ", as.character(length(dates)), " ",
+                        as.character(cm@cpts[1])))
+                for(i in 1:length(cm@cpts)) {
+                    if ( i == 1 ) {
+                        t$output=c(1, as.numeric(dates[cm@cpts[i]]), as.numeric(cm@param.est$variance[i]))
+                        s$emit(t)
+                    } else {
+                        t$output=c(2, as.numeric(dates[cm@cpts[i]]), as.numeric(cm@param.est$variance[i]))
+                        s$emit(t)
+                    }
+                }
+                                        #t$output=c(1, as.vector(cm@cpts), as.vector(cm@param.est))
+            }
         }
     }
     s$ack(t);                                        #create 2nd tuple...

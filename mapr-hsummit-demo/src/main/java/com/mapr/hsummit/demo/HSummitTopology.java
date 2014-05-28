@@ -29,7 +29,7 @@ public class HSummitTopology {
         builder.setSpout("spout", new MLBGameLogSpout(resourcePath,dataFilename, teamName), 1);
         builder.setBolt("count", new RBolt(rFilename), 1).shuffleGrouping("spout");
         //builder.setBolt("print", new PrinterBolt(), 1).shuffleGrouping("count");
-        builder.setBolt("serve", new JettyServerBolt(resourcePath), 1).shuffleGrouping("count");
+        //builder.setBolt("serve", new JettyServerBolt(resourcePath), 1).shuffleGrouping("count");
 
         Config conf = new Config();
         conf.setDebug(true);

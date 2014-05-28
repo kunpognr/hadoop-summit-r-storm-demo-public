@@ -235,12 +235,15 @@ library(bcp)
 #create a Storm object
 storm = Storm$new();
 values <- c()
+allvalues <- c()
 dates <- c()
 year <- 0
 burnin=30
 mcmc=100
 window=50
 threshold <- 0.92
+cset <- c()
+curpoint <- 0
 #by default it has a handler that logs that the tuple was skipped.
 #let's replace it that with something more useful:
 storm$lambda = function(s) {
@@ -258,21 +261,36 @@ storm$lambda = function(s) {
 
         #process bcp by the year
         #if ( date$year > year ) {
-        if ( length(dates) > window ) {
-            bcp_prob <- bcp(values, burnin=burnin, mcmc=mcmc)$posterior.prob
-            changeindexes <- which(bcp_prob > 0.90)
-            s$log(c("CCC ", length(changeindexes)))
-            if ( length(changeindexes) > 0 ) {
-                for( i in 1:length(changeindexes) ) {
-                    if ( i == 1 ) {
-                        t$output=c(1, as.numeric(dates[changeindexes[i]]), as.numeric(bcp_prob[changeindexes[i]]))
-                        s$emit(t)
-                    } else {
-                        t$output=c(2, as.numeric(dates[changeindexes[i]]), as.numeric(bcp_prob[changeindexes[i]]))
-                        s$emit(t)
-                    }
-                }
+        if ( length(allvalues) > window ) {
+            #bcp_prob <- bcp(values, burnin=burnin, mcmc=mcmc)$posterior.prob
+            #changeindexes <- which(bcp_prob > 0.90)
+            #s$log(c("CCC ", length(changeindexes)))
+            #if ( length(changeindexes) > 0 ) {
+            #    for( i in 1:length(changeindexes) ) {
+            #        if ( i == 1 ) {
+            #            t$output=c(1, as.numeric(dates[changeindexes[i]]), as.numeric(bcp_prob[changeindexes[i]]))
+            #            s$emit(t)
+            #        } else {
+            #            t$output=c(2, as.numeric(dates[changeindexes[i]]), as.numeric(bcp_prob[changeindexes[i]]))
+            #            s$emit(t)
+            #        }
+            #    }
+            #}
+
+            png(paste("/tmp/oak.local.png",sep=""));
+            bcp.local=bcp(values,burnin=burnin,mcmc=mcmc)
+            legacyplot(bcp.local)
+            dev.off();
+            cset <<- unique(c(cset,curpoint+which(bcp.local$posterior.prob > 0.3)))
+            png(paste("/tmp/oak.global.png",sep=""));
+            bcp.global=bcp(allvalues,burnin=burnin,mcmc=mcmc)
+            legacyplot(bcp.global)
+            for( j in cset ) {
+              par(new=T)
+              abline(v=j,col="cyan")
             }
+            dev.off();
+            curpoint<<-curpoint+1;
             #year <<- date$year
             values <<- values[-1]
             dates <<- dates[-1]
@@ -282,6 +300,7 @@ storm$lambda = function(s) {
 
         values <<- c(values, as.numeric(t$input[[3]]))
         dates <<- c(dates, as.numeric(t$input[[1]]))
+        allvalues <<- c(allvalues, as.numeric(t$input[[3]]))
         t$output = c(0, t$input[[1]], t$input[[3]])
         s$emit(t);
         

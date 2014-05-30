@@ -54,6 +54,11 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.json("/data/levels", function(data) {
+
+  if (data.length > 50) {
+    data = data.slice(data.length - 50, data.length);
+  }
+
   color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
 
   data.forEach(function(d) {
@@ -92,10 +97,10 @@ d3.json("/data/levels", function(data) {
       .style("text-anchor", "end")
       .text("Score");
 
-  var serie = svg.selectAll(".serie")
-      .data(series)
-    .enter().append("g")
-      .attr("class", "serie");
+  var serie = svg.selectAll(".serie").data(series);
+
+  serie.exit().remove();
+  serie.enter().append("g").attr("class", "serie");
 
   serie.append("path")
       .attr("class", "line")

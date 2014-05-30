@@ -22,4 +22,21 @@ If it doesn't, install using the following command. Be aware that you must have 
 
 > install.packages('changepoint')
 
+> install.packages('zoo')
 
+> install.packages('bcp')
+
+
+Compiling and executing
+-----------------------
+
+Create the artifact by running Maven:
+
+> mvn clean package
+
+Find the JAR in target/mapr-hsummit-demo-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+
+Run with 
+
+> java -cp target/mapr-hsummit-demo-1.0-SNAPSHOT-jar-with-dependencies.jar com.mapr.hsummit.demo.HSummitTopology 
